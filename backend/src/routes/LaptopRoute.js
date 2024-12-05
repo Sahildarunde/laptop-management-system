@@ -41,6 +41,42 @@ laptopRouter.get("/laptops", async (req, res) => {
     }
 });
 
+laptopRouter.get("/laptops/assigned", async (req, res) => {
+  try {
+    const assignedLaptops = await prisma.assignment.findMany({
+      where: {
+        returnedAt: null,
+      },
+      include: {
+        laptop: true, 
+        employee: true, 
+      },
+    });
+
+    res.status(200).json(assignedLaptops);
+  } catch (error) {
+    console.error("Error fetching assigned laptops:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+laptopRouter.get("/laptops/available", async (req, res) => {
+  try {
+    const availableLaptops = await prisma.laptop.findMany({
+      where: {
+        status: "AVAILABLE", 
+      },
+    });
+
+    res.status(200).json(availableLaptops);
+  } catch (error) {
+    console.error("Error fetching available laptops:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
 
 laptopRouter.put("/laptop/:id", async (req, res) => {
   const { id } = req.params;
