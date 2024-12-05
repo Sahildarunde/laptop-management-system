@@ -32,18 +32,18 @@ laptopRouter.post("/laptop", async (req, res) => {
 });
 
 laptopRouter.post("/assign", async (req, res) => {
-  const { laptopId, employeeName } = req.body;
+  const { laptopId, employeeId } = req.body;
 
-  if (!laptopId || !employeeName) {
+  if (!laptopId || !employeeId) {
     return res.status(400).json({
-      error: "Laptop ID and employee name are required",
+      error: "Laptop ID and employee ID are required",
     });
   }
 
   try {
-    // Find the employee by name
+    // Find the employee by ID
     const employee = await prisma.employee.findUnique({
-      where: { name: employeeName },
+      where: { id: employeeId },
     });
 
     if (!employee) {
@@ -69,7 +69,6 @@ laptopRouter.post("/assign", async (req, res) => {
       });
     }
 
-    // Assign the laptop to the employee
     const assignment = await prisma.assignment.create({
       data: {
         laptopId: laptop.id,
@@ -93,6 +92,7 @@ laptopRouter.post("/assign", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
 laptopRouter.get("/laptops", async (req, res) => {
