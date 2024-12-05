@@ -76,9 +76,9 @@ laptopRouter.get("/laptop/:laptopId", async (req, res) => {
   }
 
   try {
-    const laptop = await prisma.laptop.findUnique({
+    const laptop = await prisma.assignment.findUnique({
       where: {
-        id: parseInt(laptopId), // Assuming laptopId is an integer; adjust if it's another type
+        laptopId: parseInt(laptopId), // Assuming laptopId is an integer; adjust if it's another type
       },
     });
 
