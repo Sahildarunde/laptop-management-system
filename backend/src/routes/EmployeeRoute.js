@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { prismaClient as prisma } from "../db/index.js";
+import { authenticateToken } from "../middleware.js";
 
 const employeeRouter = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
@@ -101,7 +102,7 @@ employeeRouter.post("/signin", async (req, res) => {
 
 
 
-employeeRouter.get("/employees", async (req, res) => {
+employeeRouter.get("/employees", authenticateToken, async (req, res) => {
   try {
     const employees = await prisma.employee.findMany();
     res.status(200).json(employees);
@@ -111,7 +112,7 @@ employeeRouter.get("/employees", async (req, res) => {
   }
 });
 
-employeeRouter.post("/assign-laptop", async (req, res) => {
+employeeRouter.post("/assign-laptop",authenticateToken, async (req, res) => {
   const { laptopId, employeeId } = req.body;
 
   if (!laptopId || !employeeId) {
@@ -159,7 +160,7 @@ employeeRouter.post("/assign-laptop", async (req, res) => {
   }
 });
 
-employeeRouter.get("/employee/:employeeId/laptops", async (req, res) => {
+employeeRouter.get("/employee/:employeeId/laptops",authenticateToken, async (req, res) => {
   const { employeeId } = req.params;
 
   try {
