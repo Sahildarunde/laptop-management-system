@@ -76,22 +76,29 @@ laptopRouter.get("/laptop/:laptopId", async (req, res) => {
   }
 
   try {
-    const laptop = await prisma.assignment.findUnique({
+    // Fetch laptop assignment from the assignment table
+    const laptopAssignment = await prisma.assignment.findFirst({
       where: {
-        laptopId: parseInt(laptopId), // Assuming laptopId is an integer; adjust if it's another type
+        laptopId: parseInt(laptopId), // Assuming laptopId is an integer in the assignment table
+      },
+      include: {
+        // Include related data from the laptop and employee tables
+        laptop: true, // Laptop details (if your assignment table has a relation to the laptop table)
+        employee: true, // Employee details (if your assignment table has a relation to the employee table)
       },
     });
 
-    if (!laptop) {
-      return res.status(404).json({ error: "Laptop not found" });
+    if (!laptopAssignment) {
+      return res.status(404).json({ error: "Laptop assignment not found" });
     }
 
-    res.status(200).json(laptop);
+    res.status(200).json(laptopAssignment);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
 laptopRouter.post("/assign", async (req, res) => {
