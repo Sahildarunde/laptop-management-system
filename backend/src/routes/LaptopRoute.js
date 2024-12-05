@@ -31,6 +31,69 @@ laptopRouter.post("/laptop", async (req, res) => {
   }
 });
 
+
+laptopRouter.post("/unassign-laptop", async (req, res) => {
+  const { laptopId, status } = req.body;
+
+  // Validate laptopId and status
+  if (!laptopId) {
+    return res.status(400).json({ error: "Laptop ID is required" });
+  }
+
+  const validStatuses = ['AVAILABLE', 'MAINTENANCE'];
+  if (status && !validStatuses.includes(status)) {
+    return res.status(400).json({ error: "Status must be either 'AVAILABLE' or 'MAINTENANCE'" });
+  }
+
+  try {
+    // Update the laptop to unassign it and set status to 'AVAILABLE' or 'MAINTENANCE'
+    const updatedLaptop = await prisma.laptop.update({
+      where: {
+        id: parseInt(laptopId), // Assuming laptopId is an integer
+      },
+      data: {
+        status: status || 'AVAILABLE', // Default status to 'AVAILABLE' if not provided
+        employeeId: null, // Remove the employee association
+      },
+    });
+
+    res.status(200).json({
+      message: `Laptop unassigned successfully and set to ${updatedLaptop.status}`,
+      laptop: updatedLaptop,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+laptopRouter.get("/laptop/:laptopId", async (req, res) => {
+  const { laptopId } = req.params;
+
+  if (!laptopId) {
+    return res.status(400).json({ error: "Laptop ID is required" });
+  }
+
+  try {
+    const laptop = await prisma.laptop.findUnique({
+      where: {
+        id: parseInt(laptopId), // Assuming laptopId is an integer; adjust if it's another type
+      },
+    });
+
+    if (!laptop) {
+      return res.status(404).json({ error: "Laptop not found" });
+    }
+
+    res.status(200).json(laptop);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 laptopRouter.post("/assign", async (req, res) => {
   const { laptopId, employeeId } = req.body;
 
