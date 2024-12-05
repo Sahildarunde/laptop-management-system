@@ -45,11 +45,14 @@ laptopRouter.get("/laptops/assigned", async (req, res) => {
   try {
     const assignedLaptops = await prisma.assignment.findMany({
       where: {
-        returnedAt: null,
+        returnedAt: null, 
+        laptop: {
+          status: "ASSIGNED" 
+        }
       },
       include: {
         laptop: true, 
-        employee: true, 
+        employee: true,
       },
     });
 
@@ -59,6 +62,7 @@ laptopRouter.get("/laptops/assigned", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 laptopRouter.get("/laptops/available", async (req, res) => {
   try {
