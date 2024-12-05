@@ -80,6 +80,22 @@ laptopRouter.get("/laptops/available", async (req, res) => {
 });
 
 
+laptopRouter.get("/laptops/maintenance", async (req, res) => {
+  try {
+    const maintenanceLaptops = await prisma.laptop.findMany({
+      where: {
+        status: "MAINTENANCE", 
+      },
+    });
+
+    res.status(200).json(maintenanceLaptops);
+  } catch (error) {
+    console.error("Error fetching available laptops:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 
 laptopRouter.put("/laptop/:id", async (req, res) => {
