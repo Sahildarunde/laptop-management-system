@@ -159,7 +159,7 @@ employeeRouter.post("/assign-laptop", async (req, res) => {
   }
 });
 
-router.get("/employee/:employeeId/laptops", async (req, res) => {
+employeeRouter.get("/employee/:employeeId/laptops", async (req, res) => {
   const { employeeId } = req.params;
 
   try {
