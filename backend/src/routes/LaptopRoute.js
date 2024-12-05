@@ -31,6 +31,70 @@ laptopRouter.post("/laptop", async (req, res) => {
   }
 });
 
+laptopRouter.post("/assign-laptop", async (req, res) => {
+  const { laptopId, employeeName } = req.body;
+
+  if (!laptopId || !employeeName) {
+    return res.status(400).json({
+      error: "Laptop ID and employee name are required",
+    });
+  }
+
+  try {
+    // Find the employee by name
+    const employee = await prisma.employee.findUnique({
+      where: { name: employeeName },
+    });
+
+    if (!employee) {
+      return res.status(404).json({
+        error: "Employee not found",
+      });
+    }
+
+    // Find the laptop by ID
+    const laptop = await prisma.laptop.findUnique({
+      where: { id: laptopId },
+    });
+
+    if (!laptop) {
+      return res.status(404).json({
+        error: "Laptop not found",
+      });
+    }
+
+    if (laptop.status !== "AVAILABLE") {
+      return res.status(400).json({
+        error: "Laptop is not available for assignment",
+      });
+    }
+
+    // Assign the laptop to the employee
+    const assignment = await prisma.assignment.create({
+      data: {
+        laptopId: laptop.id,
+        employeeId: employee.id,
+        assignedAt: new Date(),
+      },
+    });
+
+    // Update the laptop status
+    await prisma.laptop.update({
+      where: { id: laptop.id },
+      data: { status: "ASSIGNED" },
+    });
+
+    res.status(200).json({
+      message: "Laptop assigned successfully",
+      assignment,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 laptopRouter.get("/laptops", async (req, res) => {
     try {
       const laptops = await prisma.laptop.findMany();

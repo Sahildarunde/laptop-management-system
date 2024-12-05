@@ -100,8 +100,6 @@ employeeRouter.post("/signin", async (req, res) => {
 });
 
 
-
-
 employeeRouter.get("/employees", authenticateToken, async (req, res) => {
   try {
     const employees = await prisma.employee.findMany();
