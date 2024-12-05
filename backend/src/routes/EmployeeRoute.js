@@ -54,8 +54,8 @@ employeeRouter.post("/signup", async (req, res) => {
 
     res.status(201).json({
       message: "Employee created successfully",
-      employee: { id: newEmployee.id, email: newEmployee.email, role: newEmployee.role },
       token,
+      role: newEmployee.role
     });
   } catch (error) {
     console.error(error);
