@@ -31,7 +31,7 @@ laptopRouter.post("/laptop", async (req, res) => {
   }
 });
 
-laptopRouter.post("/assign-laptop", async (req, res) => {
+laptopRouter.post("/assign", async (req, res) => {
   const { laptopId, employeeName } = req.body;
 
   if (!laptopId || !employeeName) {
