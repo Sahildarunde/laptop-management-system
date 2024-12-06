@@ -18,7 +18,7 @@ const Navbar = () => {
     <nav className="bg-[#011627] p-4">
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-white font-semibold text-xl">
-          <Link to={isLoggedIn ? localStorage.getItem("role") === "ADMIN" ? '/dashboard' : '/employee' : '/signin'}>MyApp</Link>
+          <Link to={isLoggedIn ? localStorage.getItem("role") === "ADMIN" ? '/dashboard' : '/employee' : '/signin'}>LMS</Link>
         </div>
 
         <div className="hidden md:flex space-x-4">
