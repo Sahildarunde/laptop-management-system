@@ -291,6 +291,33 @@ employeeRouter.post("/employee/:employeeId/report", async (req, res) => {
   }
 });
 
+employeeRouter.get("/laptop-requests", async (req, res) => {
+  try {
+    // Fetch all laptop requests from the database
+    const laptopRequests = await prisma.laptopRequest.findMany();
+
+    // Respond with the list of laptop requests
+    res.status(200).json(laptopRequests);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+employeeRouter.get("/reports", async (req, res) => {
+  try {
+    // Fetch all reports (issues) from the database
+    const issues = await prisma.issue.findMany();
+
+    // Respond with the list of issues
+    res.status(200).json(issues);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 
 
