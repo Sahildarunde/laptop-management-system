@@ -321,7 +321,6 @@ employeeRouter.delete("/laptop-requests/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Check if the laptop request exists
     const existingRequest = await prisma.laptopRequest.findUnique({
       where: { id: parseInt(id) },
     });
@@ -330,7 +329,6 @@ employeeRouter.delete("/laptop-requests/:id", async (req, res) => {
       return res.status(404).json({ error: "Laptop request not found" });
     }
 
-    // Delete the laptop request
     await prisma.laptopRequest.delete({
       where: { id: parseInt(id) },
     });
@@ -338,6 +336,51 @@ employeeRouter.delete("/laptop-requests/:id", async (req, res) => {
     res.status(200).json({ message: "Laptop request deleted successfully" });
   } catch (error) {
     console.error("Error deleting laptop request:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+employeeRouter.post("/assign-laptop/:employeeId", async (req, res) => {
+  const { employeeId } = req.params;
+
+  try {
+    // Step 1: Find an available laptop
+    const availableLaptop = await prisma.laptop.findFirst({
+      where: {
+        status: 'AVAILABLE',  // Find a laptop with status AVAILABLE
+      },
+    });
+
+    if (!availableLaptop) {
+      return res.status(404).json({ error: "No available laptop found" });
+    }
+
+    // Step 2: Update the laptop's status to ASSIGNED
+    const updatedLaptop = await prisma.laptop.update({
+      where: { id: availableLaptop.id },
+      data: {
+        status: 'ASSIGNED',
+      },
+    });
+
+    // Step 3: Create an assignment record in the Assignment table
+    const newAssignment = await prisma.assignment.create({
+      data: {
+        laptopId: updatedLaptop.id,
+        employeeId: parseInt(employeeId),  // Assign to the given employee
+        assignedAt: new Date(),
+      },
+    });
+
+    // Step 4: Return success response
+    res.status(200).json({
+      message: `Laptop ${updatedLaptop.brand} ${updatedLaptop.model} assigned to employee ${employeeId} successfully`,
+      assignment: newAssignment,
+      laptop: updatedLaptop,
+    });
+  } catch (error) {
+    console.error("Error assigning laptop:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
