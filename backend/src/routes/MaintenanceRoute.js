@@ -53,6 +53,10 @@ maintenanceRouter.post("/maintenance", async (req, res) => {
   }
 });
 
+maintenanceRouter.delete("/delete", (req, res) => {
+  
+})
+
 
 
 

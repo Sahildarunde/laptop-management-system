@@ -317,6 +317,32 @@ employeeRouter.get("/reports", async (req, res) => {
   }
 });
 
+employeeRouter.delete("/laptop-requests/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Check if the laptop request exists
+    const existingRequest = await prisma.laptopRequest.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!existingRequest) {
+      return res.status(404).json({ error: "Laptop request not found" });
+    }
+
+    // Delete the laptop request
+    await prisma.laptopRequest.delete({
+      where: { id: parseInt(id) },
+    });
+
+    res.status(200).json({ message: "Laptop request deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting laptop request:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 
 
