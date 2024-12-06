@@ -158,7 +158,7 @@ employeeRouter.post("/assign-laptop",authenticateToken, async (req, res) => {
   }
 });
 
-employeeRouter.get("/employee/:employeeId/laptops",authenticateToken, async (req, res) => {
+employeeRouter.get("/employee/:employeeId/laptops", async (req, res) => {
   const { employeeId } = req.params;
 
   try {
