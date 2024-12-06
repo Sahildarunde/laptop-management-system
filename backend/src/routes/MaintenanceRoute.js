@@ -36,7 +36,6 @@ maintenanceRouter.post("/maintenance", async (req, res) => {
       },
     });
 
-    // Remove assignments for the laptop
     await prisma.assignment.deleteMany({
       where: {
         laptopId,
@@ -52,10 +51,6 @@ maintenanceRouter.post("/maintenance", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-maintenanceRouter.delete("/delete", (req, res) => {
-  
-})
 
 
 

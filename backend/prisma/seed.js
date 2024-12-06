@@ -10,7 +10,6 @@ async function main() {
     ],
   });
 
-  // Seed laptops
   const laptops = await prisma.laptop.createMany({
     data: [
       { brand: 'Dell', model: 'XPS 13', serialNumber: 'SN001', status: 'AVAILABLE', purchaseDate: new Date('2022-01-15') },
@@ -19,7 +18,6 @@ async function main() {
     ],
   });
 
-  // Seed assignments
   const assignments = await prisma.assignment.createMany({
     data: [
       { laptopId: 2, employeeId: 1, assignedAt: new Date('2023-01-01') },
@@ -27,21 +25,18 @@ async function main() {
     ],
   });
 
-  // Seed maintenance
   const maintenanceRecords = await prisma.maintenance.createMany({
     data: [
       { laptopId: 3, description: 'Screen replacement', status: 'MAINTENANCE', cost: 200.0, loggedAt: new Date('2023-07-01') },
     ],
   });
 
-  // Seed issues
   const issues = await prisma.issue.createMany({
     data: [
       { laptopId: 1, employeeId: 1, description: 'Battery issue', priority: 'MEDIUM', status: 'AVAILABLE', reportedAt: new Date('2023-06-15') },
     ],
   });
 
-  // Seed laptop requests
   const laptopRequests = await prisma.laptopRequest.createMany({
     data: [
       { employeeId: 2, description: 'Requesting a high-performance laptop', requestedAt: new Date('2023-08-01') },

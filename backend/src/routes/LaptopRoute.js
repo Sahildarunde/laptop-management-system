@@ -35,7 +35,6 @@ laptopRouter.post("/laptop", async (req, res) => {
 laptopRouter.post("/unassign-laptop", async (req, res) => {
   const { laptopId, status } = req.body;
 
-  // Validate input
   if (!laptopId) {
     return res.status(400).json({ error: "Laptop ID is required" });
   }
@@ -46,11 +45,10 @@ laptopRouter.post("/unassign-laptop", async (req, res) => {
   }
 
   try {
-    // First, remove or update the relevant assignment
     const assignment = await prisma.assignment.findFirst({
       where: {
-        laptopId: parseInt(laptopId), // Assuming laptopId is an integer
-        returnedAt: null, // Only unassign active assignments
+        laptopId: parseInt(laptopId), 
+        returnedAt: null, 
       },
     });
 
@@ -58,21 +56,19 @@ laptopRouter.post("/unassign-laptop", async (req, res) => {
       return res.status(404).json({ error: "No active assignment found for this laptop." });
     }
 
-    // Update the assignment's `returnedAt` field
     await prisma.assignment.update({
       where: { id: assignment.id },
       data: {
-        returnedAt: new Date(), // Mark the assignment as returned
+        returnedAt: new Date(),
       },
     });
 
-    // Next, update the laptop's status and remove the employee association
     const updatedLaptop = await prisma.laptop.update({
       where: {
         id: parseInt(laptopId),
       },
       data: {
-        status: status || 'AVAILABLE', // Default to 'AVAILABLE' if not provided
+        status: status || 'AVAILABLE',
       },
     });
 
@@ -96,15 +92,14 @@ laptopRouter.get("/laptop/:laptopId", async (req, res) => {
   }
 
   try {
-    // Fetch laptop assignment from the assignment table
     const laptopAssignment = await prisma.assignment.findFirst({
       where: {
-        laptopId: parseInt(laptopId), // Assuming laptopId is an integer in the assignment table
+        laptopId: parseInt(laptopId), 
       },
       include: {
-        // Include related data from the laptop and employee tables
-        laptop: true, // Laptop details (if your assignment table has a relation to the laptop table)
-        employee: true, // Employee details (if your assignment table has a relation to the employee table)
+        
+        laptop: true, 
+        employee: true, 
       },
     });
 
@@ -131,7 +126,6 @@ laptopRouter.post("/assign", async (req, res) => {
   }
 
   try {
-    // Find the employee by ID
     const employee = await prisma.employee.findUnique({
       where: { id: employeeId },
     });
@@ -142,7 +136,6 @@ laptopRouter.post("/assign", async (req, res) => {
       });
     }
 
-    // Find the laptop by ID
     const laptop = await prisma.laptop.findUnique({
       where: { id: laptopId },
     });
@@ -167,7 +160,6 @@ laptopRouter.post("/assign", async (req, res) => {
       },
     });
 
-    // Update the laptop status
     await prisma.laptop.update({
       where: { id: laptop.id },
       data: { status: "ASSIGNED" },

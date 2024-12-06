@@ -114,19 +114,16 @@ employeeRouter.get("/employee/:employeeId", async (req, res) => {
   const { employeeId } = req.params;
 
   try {
-    // Fetch employee by id
     const employee = await prisma.employee.findUnique({
       where: { 
         id: parseInt(employeeId),
       },
     });
 
-    // Check if employee was found
     if (!employee) {
       return res.status(404).json({ error: "Employee not found" });
     }
 
-    // Respond with the found employee
     res.status(200).json(employee);
   } catch (error) {
     console.error(error);
@@ -194,7 +191,7 @@ employeeRouter.get("/employee/:employeeId/laptops", async (req, res) => {
       include: {
         assignments: {
           where: {
-            returnedAt: null, // Only include assignments where returnedAt is null
+            returnedAt: null,
           },
           include: {
             laptop: true,
@@ -222,7 +219,6 @@ employeeRouter.post("/employee/:employeeId/laptop-request", async (req, res) => 
   const { description } = req.body;
 
   try {
-    // Find the employee in the database
     const employee = await prisma.employee.findUnique({
       where: { id: parseInt(employeeId) },
     });
@@ -231,7 +227,6 @@ employeeRouter.post("/employee/:employeeId/laptop-request", async (req, res) => 
       return res.status(404).json({ error: "Employee not found" });
     }
 
-    // Create a new laptop request
     const laptopRequest = await prisma.laptopRequest.create({
       data: {
         description,
@@ -239,7 +234,6 @@ employeeRouter.post("/employee/:employeeId/laptop-request", async (req, res) => 
       },
     });
 
-    // Respond with the created laptop request
     res.status(201).json(laptopRequest);
   } catch (error) {
     console.error(error);
@@ -253,7 +247,6 @@ employeeRouter.post("/employee/:employeeId/report", async (req, res) => {
   const { laptopId, description, priority } = req.body;
 
   try {
-    // Find the employee in the database
     const employee = await prisma.employee.findUnique({
       where: { id: parseInt(employeeId) },
     });
@@ -262,7 +255,6 @@ employeeRouter.post("/employee/:employeeId/report", async (req, res) => {
       return res.status(404).json({ error: "Employee not found" });
     }
 
-    // Find the laptop in the database
     const laptop = await prisma.laptop.findUnique({
       where: { id: parseInt(laptopId) },
     });
@@ -271,19 +263,17 @@ employeeRouter.post("/employee/:employeeId/report", async (req, res) => {
       return res.status(404).json({ error: "Laptop not found" });
     }
 
-    // Create a new report (Issue)
     const issueReport = await prisma.issue.create({
       data: {
         description,
-        priority, // Assuming priority is one of 'LOW', 'MEDIUM', or 'HIGH'
-        status: "AVAILABLE", // Default status can be 'AVAILABLE', you can change it as per your logic
+        priority, 
+        status: "AVAILABLE", 
         employeeId: parseInt(employeeId),
         laptopId: parseInt(laptopId),
         reportedAt: new Date(),
       },
     });
 
-    // Respond with the created issue report
     res.status(201).json(issueReport);
   } catch (error) {
     console.error(error);
@@ -293,10 +283,8 @@ employeeRouter.post("/employee/:employeeId/report", async (req, res) => {
 
 employeeRouter.get("/laptop-requests", async (req, res) => {
   try {
-    // Fetch all laptop requests from the database
     const laptopRequests = await prisma.laptopRequest.findMany();
 
-    // Respond with the list of laptop requests
     res.status(200).json(laptopRequests);
   } catch (error) {
     console.error(error);
@@ -306,10 +294,8 @@ employeeRouter.get("/laptop-requests", async (req, res) => {
 
 employeeRouter.get("/reports", async (req, res) => {
   try {
-    // Fetch all reports (issues) from the database
     const issues = await prisma.issue.findMany();
 
-    // Respond with the list of issues
     res.status(200).json(issues);
   } catch (error) {
     console.error(error);
@@ -345,10 +331,9 @@ employeeRouter.post("/assign-laptop/:employeeId", async (req, res) => {
   const { employeeId } = req.params;
 
   try {
-    // Step 1: Find an available laptop
     const availableLaptop = await prisma.laptop.findFirst({
       where: {
-        status: 'AVAILABLE',  // Find a laptop with status AVAILABLE
+        status: 'AVAILABLE', 
       },
     });
 
@@ -356,7 +341,6 @@ employeeRouter.post("/assign-laptop/:employeeId", async (req, res) => {
       return res.status(404).json({ error: "No available laptop found" });
     }
 
-    // Step 2: Update the laptop's status to ASSIGNED
     const updatedLaptop = await prisma.laptop.update({
       where: { id: availableLaptop.id },
       data: {
@@ -364,16 +348,14 @@ employeeRouter.post("/assign-laptop/:employeeId", async (req, res) => {
       },
     });
 
-    // Step 3: Create an assignment record in the Assignment table
     const newAssignment = await prisma.assignment.create({
       data: {
         laptopId: updatedLaptop.id,
-        employeeId: parseInt(employeeId),  // Assign to the given employee
+        employeeId: parseInt(employeeId), 
         assignedAt: new Date(),
       },
     });
 
-    // Step 4: Return success response
     res.status(200).json({
       message: `Laptop ${updatedLaptop.brand} ${updatedLaptop.model} assigned to employee ${employeeId} successfully`,
       assignment: newAssignment,
