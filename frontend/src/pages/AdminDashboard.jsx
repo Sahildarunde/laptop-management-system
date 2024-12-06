@@ -34,7 +34,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="flex flex-col items-center h-screen mt-10">
+    <div className="flex flex-col items-center h-screen mt-10 ">
       <div className="grid grid-cols-2 gap-4 w-3/4 mb-6">
         <Card title={"Total Laptops"} subtitle={laptops.length} onClick={() => navigate("/dashboard")} />
         <Card title={"Assigned Laptops"} subtitle={categorized.assigned.length} onClick={() => navigate("/assigned-laptops")}  />
@@ -50,7 +50,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="w-3/4 bg-white p-6 rounded-lg shadow-md">Laptop Details
+      <div className="w-3/4 bg-white p-6 rounded-lg shadow-md mb-1/4">Laptop Details
 
         <h2 className="text-2xl font-semibold mb-4">All Laptops</h2>
         <table className="table-auto w-full text-left border-collapse">

@@ -16,7 +16,7 @@ import { RequestPage } from './pages/RequestPage';
 function App() {
   return (
     <Router>  
-      <div className='bg-slate-100 h-screen'>
+      <div className='bg-slate-100'>
         <Navbar />
         <Routes>
           <Route path="/" element={<Signup />} />
