@@ -110,6 +110,31 @@ employeeRouter.get("/employees", async (req, res) => {
   }
 });
 
+employeeRouter.get("/employee/:employeeId", async (req, res) => {
+  const { employeeId } = req.params;
+
+  try {
+    // Fetch employee by id
+    const employee = await prisma.employee.findUnique({
+      where: { 
+        id: parseInt(employeeId),
+      },
+    });
+
+    // Check if employee was found
+    if (!employee) {
+      return res.status(404).json({ error: "Employee not found" });
+    }
+
+    // Respond with the found employee
+    res.status(200).json(employee);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 employeeRouter.post("/assign-laptop",authenticateToken, async (req, res) => {
   const { laptopId, employeeId } = req.body;
 
