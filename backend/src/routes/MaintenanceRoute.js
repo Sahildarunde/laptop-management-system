@@ -17,12 +17,36 @@ maintenanceRouter.post("/maintenance", async (req, res) => {
         description,
         cost,
         status,
-        loggedAt: new Date(), 
+        loggedAt: new Date(),
+      },
+    });
+
+    await prisma.report.deleteMany({
+      where: {
+        laptopId: laptopId,
+      },
+    });
+
+    await prisma.laptop.update({
+      where: {
+        id: laptopId,
+      },
+      data: {
+        status: "MAINTENANCE",
+      },
+    });
+
+    await prisma.employee.updateMany({
+      where: {
+        assignedLaptopId: laptopId,
+      },
+      data: {
+        assignedLaptopId: null,
       },
     });
 
     res.status(201).json({
-      message: "Maintenance log added successfully",
+      message: "Maintenance log added, report deleted, laptop status updated, and employee assignment removed",
       maintenanceLog,
     });
   } catch (error) {
@@ -30,6 +54,7 @@ maintenanceRouter.post("/maintenance", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
 

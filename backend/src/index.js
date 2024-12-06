@@ -12,7 +12,7 @@ app.use(cors())
 
 app.use('/api', employeeRouter)
 app.use("/api", laptopRouter)
-app.use("/", maintenanceRouter)
+app.use("/api", maintenanceRouter)
 
 
 app.listen(3000)
