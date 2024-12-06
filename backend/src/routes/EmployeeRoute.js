@@ -163,15 +163,21 @@ employeeRouter.get("/employee/:employeeId/laptops", async (req, res) => {
 
   try {
     const employee = await prisma.employee.findUnique({
-      where: { id: parseInt(employeeId) },
+      where: { 
+        id: parseInt(employeeId),
+      },
       include: {
         assignments: {
+          where: {
+            returnedAt: null, // Only include assignments where returnedAt is null
+          },
           include: {
             laptop: true,
           },
         },
       },
     });
+
     if (!employee) {
       return res.status(404).json({ error: "Employee not found" });
     }
@@ -184,6 +190,7 @@ employeeRouter.get("/employee/:employeeId/laptops", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
 
