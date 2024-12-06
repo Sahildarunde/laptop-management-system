@@ -21,8 +21,8 @@ export default function AvailableLaptops() {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-semibold text-center mb-6">Available Laptops</h1>
+    <div className="container mx-auto p-6 overflow-x-auto">
+      <h1 className="md:text-3xl font-semibold text-center mb-6">Available Laptops</h1>
 
       {available.length === 0 ? (
         <p>No available laptops</p>

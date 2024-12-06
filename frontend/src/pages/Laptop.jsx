@@ -21,11 +21,9 @@ const LaptopPage = () => {
   useEffect(() => {
     const fetchLaptopDetails = async () => {
       try {
-        // First API call
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/laptop/${laptopId}`);
         const data = response.data;
   
-        // Set laptop details and handle assigned status
         setLaptop(data.laptop);
         if (data.laptop.status === 'ASSIGNED' && data.employee) {
           setIsAssigned(true);
@@ -37,14 +35,11 @@ const LaptopPage = () => {
           setEmployeeName('');
         }
       } catch (err) {
-        // Check for the specific error message
         if (err.response && err.response.data && err.response.data.error === "Laptop assignment not found") {
           try {
-            // Second API call for available laptops
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/laptop-find/${laptopId}`);
             const data = response.data;
   
-            // Set laptop details for available laptops
             setLaptop(data.laptop);
             setIsAssigned(false);
             setEmployeeId('');
@@ -109,7 +104,7 @@ const LaptopPage = () => {
 
   return (
     <div className="p-4 flex flex-col items-center mt-10 bg-gray-100 rounded-lg shadow-md w-3/4 mx-auto">
-      <h2 className="text-3xl mb-4 font-semibold text-gray-800">Laptop Details</h2>
+      <h2 className="md:text-3xl mb-4 font-semibold text-gray-800">Laptop Details</h2>
       <div className="mb-6 text-left w-full px-4">
         <div><strong>Brand:</strong> {laptop.brand}</div>
         <div><strong>Model:</strong> {laptop.model}</div>

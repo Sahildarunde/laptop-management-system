@@ -51,15 +51,15 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="w-3/4 bg-white p-6 rounded-lg shadow-md mb-1/4">Laptop Details
+      <div className="w-3/4 bg-white p-6 rounded-lg shadow-md mb-1/4 overflow-x-auto">Laptop Details
 
-        <h2 className="text-2xl font-semibold mb-4">All Laptops</h2>
+        <h2 className="md:text-2xl font-semibold mb-4">All Laptops</h2>
         <table className="table-auto w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border-b">Brand</th>
               <th className="p-2 border-b">Model</th>
-              <th className="p-2 border-b">Serial Number</th>
+              <th className="p-2 border-b ">Serial Number</th>
               <th className="p-2 border-b">Status</th>
               <th className="p-2 border-b">Link</th>
               <th className="p-2 border-b">Delete</th>
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
           <tbody>
             {laptops.map((laptop) => (
               <tr key={laptop.id} className="hover:bg-gray-100">
-                <td className="p-2 border-b">{laptop.brand}</td>
+                <td className="p-2 border-b"> {laptop.brand}</td>
                 <td className="p-2 border-b">{laptop.model}</td>
                 <td className="p-2 border-b">{laptop.serialNumber}</td>
                 <td className="p-2 border-b">{laptop.status}</td>

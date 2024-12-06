@@ -21,8 +21,8 @@ export default function AssignedLaptops() {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-semibold text-center mb-6">Assigned Laptops</h1>
+    <div className="container mx-auto p-6 overflow-x-auto">
+      <h1 className="md:text-3xl font-semibold text-center mb-6">Assigned Laptops</h1>
 
       {assigned.length === 0 ? (
         <p>No assigned laptops available</p>

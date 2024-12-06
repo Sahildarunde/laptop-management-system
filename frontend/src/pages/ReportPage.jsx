@@ -44,8 +44,8 @@ export function ReportPage() {
   }
 
   return (
-    <div className="container mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-4">Reports</h2>
+    <div className="container mx-auto mt-10 overflow-x-auto">
+      <h2 className="md:text-2xl font-bold mb-4">Reports</h2>
       
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto border-collapse border border-gray-300">

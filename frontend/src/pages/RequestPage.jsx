@@ -64,8 +64,8 @@ export function RequestPage() {
   }
 
   return (
-    <div className="container mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-4">Laptop Requests</h2>
+    <div className="container mx-auto mt-10 overflow-x-auto">
+      <h2 className="md:text-2xl font-bold mb-4">Laptop Requests</h2>
 
       {requests.length === 0 ? (
         <div className="text-center text-gray-600">No laptop requests available.</div>
