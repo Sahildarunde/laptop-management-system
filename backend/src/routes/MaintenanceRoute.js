@@ -31,6 +31,8 @@ maintenanceRouter.post("/maintenance", async (req, res) => {
   }
 });
 
+
+
 maintenanceRouter.get("/maintenance/:laptopId", async (req, res) => {
     const { laptopId } = req.params;
   
