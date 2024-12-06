@@ -21,9 +21,9 @@ maintenanceRouter.post("/maintenance", async (req, res) => {
       },
     });
 
-    await prisma.report.deleteMany({
+    await prisma.issue.deleteMany({
       where: {
-        laptopId: laptopId,
+        laptopId,
       },
     });
 
@@ -36,17 +36,15 @@ maintenanceRouter.post("/maintenance", async (req, res) => {
       },
     });
 
-    await prisma.employee.updateMany({
+    // Remove assignments for the laptop
+    await prisma.assignment.deleteMany({
       where: {
-        assignedLaptopId: laptopId,
-      },
-      data: {
-        assignedLaptopId: null,
+        laptopId,
       },
     });
 
     res.status(201).json({
-      message: "Maintenance log added, report deleted, laptop status updated, and employee assignment removed",
+      message: "Maintenance log added, reports deleted, laptop status updated, and employee assignments removed",
       maintenanceLog,
     });
   } catch (error) {
@@ -54,6 +52,7 @@ maintenanceRouter.post("/maintenance", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
 
