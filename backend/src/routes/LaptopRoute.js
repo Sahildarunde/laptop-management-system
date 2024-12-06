@@ -35,7 +35,7 @@ laptopRouter.post("/laptop", async (req, res) => {
 laptopRouter.post("/unassign-laptop", async (req, res) => {
   const { laptopId, status } = req.body;
 
-  // Validate laptopId and status
+  // Validate input
   if (!laptopId) {
     return res.status(400).json({ error: "Laptop ID is required" });
   }
@@ -46,13 +46,33 @@ laptopRouter.post("/unassign-laptop", async (req, res) => {
   }
 
   try {
-    // Update the laptop to unassign it and set status to 'AVAILABLE' or 'MAINTENANCE'
+    // First, remove or update the relevant assignment
+    const assignment = await prisma.assignment.findFirst({
+      where: {
+        laptopId: parseInt(laptopId), // Assuming laptopId is an integer
+        returnedAt: null, // Only unassign active assignments
+      },
+    });
+
+    if (!assignment) {
+      return res.status(404).json({ error: "No active assignment found for this laptop." });
+    }
+
+    // Update the assignment's `returnedAt` field
+    await prisma.assignment.update({
+      where: { id: assignment.id },
+      data: {
+        returnedAt: new Date(), // Mark the assignment as returned
+      },
+    });
+
+    // Next, update the laptop's status and remove the employee association
     const updatedLaptop = await prisma.laptop.update({
       where: {
-        id: parseInt(laptopId), // Assuming laptopId is an integer
+        id: parseInt(laptopId),
       },
       data: {
-        status: status || 'AVAILABLE', // Default status to 'AVAILABLE' if not provided
+        status: status || 'AVAILABLE', // Default to 'AVAILABLE' if not provided
         employeeId: null, // Remove the employee association
       },
     });
@@ -62,10 +82,11 @@ laptopRouter.post("/unassign-laptop", async (req, res) => {
       laptop: updatedLaptop,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error unassigning laptop:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
 laptopRouter.get("/laptop/:laptopId", async (req, res) => {
