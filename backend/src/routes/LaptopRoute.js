@@ -307,7 +307,6 @@ laptopRouter.put("/laptop/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 laptopRouter.delete("/laptop/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -317,40 +316,59 @@ laptopRouter.delete("/laptop/:id", async (req, res) => {
     // Check if the laptop exists
     const existingLaptop = await prisma.laptop.findUnique({
       where: { id: laptopId },
-      include: { assignedTo: true }, // Include employee assignment details
+      include: {
+        assignments: true, // Include assignments to check if laptop is assigned
+        maintenance: true, // Include maintenance to check if there are any related maintenance records
+        issues: true,      // Include issues to check if there are any related issues
+      },
     });
 
     if (!existingLaptop) {
       return res.status(404).json({ error: "Laptop not found" });
     }
 
-    // Check if the laptop is assigned
-    if (existingLaptop.status === "ASSIGNED" && existingLaptop.assignedTo) {
-      // Remove the assignment
-      await prisma.assignment.delete({
-        where: { laptopId },
+    // Delete related assignments, maintenance, and issues
+    const deleteAssignments = existingLaptop.assignments.map((assignment) => {
+      return prisma.assignment.delete({
+        where: { id: assignment.id },
       });
+    });
 
-      // Update the employee to remove the assignment
-      await prisma.employee.update({
-        where: { id: existingLaptop.assignedTo.id },
-        data: { laptopId: null }, // Remove the laptop reference
+    const deleteMaintenance = existingLaptop.maintenance.map((record) => {
+      return prisma.maintenance.delete({
+        where: { id: record.id },
       });
-    }
+    });
 
-    // Delete the laptop
+    const deleteIssues = existingLaptop.issues.map((issue) => {
+      return prisma.issue.delete({
+        where: { id: issue.id },
+      });
+    });
+
+    // Await the deletion of all related records
+    await Promise.all([
+      ...deleteAssignments,
+      ...deleteMaintenance,
+      ...deleteIssues,
+    ]);
+
+    // Finally, delete the laptop itself
     await prisma.laptop.delete({
       where: { id: laptopId },
     });
 
     res.status(200).json({
-      message: "Laptop and associated assignment (if any) deleted successfully",
+      message: "Laptop and associated records (assignments, maintenance, issues) deleted successfully",
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+
 
 
 
