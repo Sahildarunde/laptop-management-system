@@ -223,6 +223,50 @@ employeeRouter.post("/employee/:employeeId/laptop-request", async (req, res) => 
 });
 
 
+employeeRouter.post("/employee/:employeeId/report", async (req, res) => {
+  const { employeeId } = req.params;
+  const { laptopId, description, priority } = req.body;
+
+  try {
+    // Find the employee in the database
+    const employee = await prisma.employee.findUnique({
+      where: { id: parseInt(employeeId) },
+    });
+
+    if (!employee) {
+      return res.status(404).json({ error: "Employee not found" });
+    }
+
+    // Find the laptop in the database
+    const laptop = await prisma.laptop.findUnique({
+      where: { id: parseInt(laptopId) },
+    });
+
+    if (!laptop) {
+      return res.status(404).json({ error: "Laptop not found" });
+    }
+
+    // Create a new report (Issue)
+    const issueReport = await prisma.issue.create({
+      data: {
+        description,
+        priority, // Assuming priority is one of 'LOW', 'MEDIUM', or 'HIGH'
+        status: "AVAILABLE", // Default status can be 'AVAILABLE', you can change it as per your logic
+        employeeId: parseInt(employeeId),
+        laptopId: parseInt(laptopId),
+        reportedAt: new Date(),
+      },
+    });
+
+    // Respond with the created issue report
+    res.status(201).json(issueReport);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 
 export default employeeRouter;
