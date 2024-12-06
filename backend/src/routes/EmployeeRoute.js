@@ -192,6 +192,37 @@ employeeRouter.get("/employee/:employeeId/laptops", async (req, res) => {
 });
 
 
+employeeRouter.post("/employee/:employeeId/laptop-request", async (req, res) => {
+  const { employeeId } = req.params;
+  const { description } = req.body;
+
+  try {
+    // Find the employee in the database
+    const employee = await prisma.employee.findUnique({
+      where: { id: parseInt(employeeId) },
+    });
+
+    if (!employee) {
+      return res.status(404).json({ error: "Employee not found" });
+    }
+
+    // Create a new laptop request
+    const laptopRequest = await prisma.laptopRequest.create({
+      data: {
+        description,
+        employeeId: parseInt(employeeId),
+      },
+    });
+
+    // Respond with the created laptop request
+    res.status(201).json(laptopRequest);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 
 export default employeeRouter;
