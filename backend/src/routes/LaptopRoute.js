@@ -73,7 +73,6 @@ laptopRouter.post("/unassign-laptop", async (req, res) => {
       },
       data: {
         status: status || 'AVAILABLE', // Default to 'AVAILABLE' if not provided
-        employeeId: null, // Remove the employee association
       },
     });
 
@@ -178,7 +177,7 @@ laptopRouter.post("/assign", async (req, res) => {
       message: "Laptop assigned successfully",
       assignment,
     });
-  } catch (error) {
+  } catch (error) {unass
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
