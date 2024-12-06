@@ -251,6 +251,28 @@ laptopRouter.get("/laptops/maintenance", async (req, res) => {
 
 
 
+laptopRouter.get("/laptop-find/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const laptop = await prisma.laptop.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!laptop) {
+      return res.status(404).json({ error: "Laptop not found" });
+    }
+
+    res.status(200).json({ laptop });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+
 
 laptopRouter.put("/laptop/:id", async (req, res) => {
   const { id } = req.params;
