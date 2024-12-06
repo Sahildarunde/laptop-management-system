@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Loader from '../components/Loader';
 
 export function ReportPage() {
   const [reports, setReports] = useState([]);
@@ -39,7 +40,7 @@ export function ReportPage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader /></div>;
   }
 
   return (

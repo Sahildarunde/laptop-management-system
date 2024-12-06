@@ -8,6 +8,7 @@ import AddLaptopModal from '../components/AddModal';
 import { fetchEmployees } from '../store/slices/employeeSlice';
 import { DeleteIcon, LinkIcon } from '../icons';
 import axios from 'axios';
+import Loader from '../components/Loader';
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
@@ -22,7 +23,7 @@ export default function AdminDashboard() {
     dispatch(fetchEmployees())
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><Loader /></div>;
   if (error) return <div>Error: {error}</div>;
 
   const openModal = () => {

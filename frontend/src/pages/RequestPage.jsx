@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Loader from "../components/Loader";
 
 export function RequestPage() {
   const [requests, setRequests] = useState([]);
@@ -59,7 +60,7 @@ export function RequestPage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader /></div>;
   }
 
   return (

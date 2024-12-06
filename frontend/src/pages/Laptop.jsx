@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import SearchNames from '../components/Search';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEmployees } from '../store/slices/employeeSlice';
+import Loader from '../components/Loader';
 
 const LaptopPage = () => {
   const { laptopId } = useParams();
@@ -101,7 +102,9 @@ const LaptopPage = () => {
 
 
   if (!laptop) {
-    return <div>Loading laptop details...</div>;
+    return <div>
+      <Loader />
+    </div>;
   }
 
   return (

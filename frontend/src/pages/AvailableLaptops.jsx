@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAvailableLaptops } from '../store/slices/adminSlice';
+import Loader from '../components/Loader';
 
 export default function AvailableLaptops() {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ export default function AvailableLaptops() {
   }, [dispatch]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader /></div>;
   }
 
   if (error) {
