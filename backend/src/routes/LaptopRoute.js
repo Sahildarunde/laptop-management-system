@@ -309,29 +309,49 @@ laptopRouter.put("/laptop/:id", async (req, res) => {
 });
 
 laptopRouter.delete("/laptop/:id", async (req, res) => {
-    const { id } = req.params;
-  
-    try {
-      const existingLaptop = await prisma.laptop.findUnique({
-        where: { id: parseInt(id) },
-      });
-  
-      if (!existingLaptop) {
-        return res.status(404).json({ error: "Laptop not found" });
-      }
-  
-      await prisma.laptop.delete({
-        where: { id: parseInt(id) },
-      });
-  
-      res.status(200).json({
-        message: "Laptop deleted successfully",
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Internal server error" });
+  const { id } = req.params;
+
+  try {
+    const laptopId = parseInt(id);
+
+    // Check if the laptop exists
+    const existingLaptop = await prisma.laptop.findUnique({
+      where: { id: laptopId },
+      include: { assignedTo: true }, // Include employee assignment details
+    });
+
+    if (!existingLaptop) {
+      return res.status(404).json({ error: "Laptop not found" });
     }
+
+    // Check if the laptop is assigned
+    if (existingLaptop.status === "ASSIGNED" && existingLaptop.assignedTo) {
+      // Remove the assignment
+      await prisma.assignment.delete({
+        where: { laptopId },
+      });
+
+      // Update the employee to remove the assignment
+      await prisma.employee.update({
+        where: { id: existingLaptop.assignedTo.id },
+        data: { laptopId: null }, // Remove the laptop reference
+      });
+    }
+
+    // Delete the laptop
+    await prisma.laptop.delete({
+      where: { id: laptopId },
+    });
+
+    res.status(200).json({
+      message: "Laptop and associated assignment (if any) deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
+
 
 
 
